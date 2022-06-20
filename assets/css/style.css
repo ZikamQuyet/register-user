@@ -1,0 +1,103 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  line-height: 1.5;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  outline: none;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+.container {
+  margin: 50px auto;
+  max-width: 960px;
+}
+h3 {
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  background: #28a745;
+  color: white;
+}
+form {
+  padding: 30px 20px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+.input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+.input-box input {
+  padding: 5px 10px;
+}
+.btn {
+  padding: 5px 10px;
+  min-width: 70px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+.btn-save {
+  background: #28a745;
+  color: white;
+}
+.btn-reset,
+.btn-edit {
+  background: #ffc107;
+}
+.btn-delete {
+  color: white;
+  background: #dc3545;
+}
+table {
+  width: 100%;
+}
+table,
+th,
+td {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  padding: 5px 10px;
+}
+thead tr {
+  background: #28a745;
+}
+tr td:last-child,
+tr td:nth-last-child(2) {
+  text-align: center;
+}
