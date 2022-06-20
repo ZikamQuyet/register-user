@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="assets/css/style.css" />
     <title>Register user</title>
   </head>
@@ -18,32 +19,25 @@
       <h3>Register User</h3>
       <form action="">
         <div class="input-box">
-          <label for="user-name">User Name:</label>
-          <input type="text" name="" id="user-name" />
+          <label for="name">Họ và tên:</label>
+          <input type="text" name="" id="name" />
+          <small>Không bỏ trống</small>
         </div>
         <div class="input-box">
-          <label for="full-name">Full Name:</label>
-          <input type="text" name="" id="full-name" />
+          <label for="class">Lớp:</label>
+          <input type="text" name="" id="class" />
+          <small>Không bỏ trống</small>
         </div>
-        <div class="input-box">
-          <label for="email">Email:</label>
-          <input type="text" name="" id="email" />
-        </div>
-        <div class="input-box">
-          <label for="birthday">Birthday:</label>
-          <input type="date" name="" id="birthday" />
-        </div>
-        <button class="btn btn-save">Save</button>
-        <button class="btn btn-reset">Reset</button>
+        <button class="btn btn-save">Lưu</button>
+        <button class="btn btn-reset">Đặt lại</button>
       </form>
       <table>
         <thead>
           <tr>
-            <th>No</th>
-            <th>User Name</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Birthday</th>
+            <th>STT</th>
+            <th>Mã sinh viên</th>
+            <th>Họ và tên</th>
+            <th>Lớp</th>
             <th></th>
             <th></th>
           </tr>
@@ -54,13 +48,13 @@
             <td>A</td>
             <td>TRAN VAN A</td>
             <td>tranvandiep.it@gmail.com</td>
-            <td>2000-06-06</td>
-            <td><button class="btn btn-edit">Edit</button></td>
-            <td><button class="btn btn-delete">Delete</button></td>
+            <td><button class="btn btn-edit">Sửa</button></td>
+            <td><button class="btn btn-delete">Xóa</button></td>
           </tr>
         </tbody>
       </table>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="assets/js/app.js"></script>
   </body>
 </html>
