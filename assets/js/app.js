@@ -4,19 +4,23 @@ const btnReset = document.querySelector(".btn-reset");
 const txtName = document.querySelector("#name");
 const txtClass = document.querySelector("#class");
 
-
-
-btnReset.addEventListener("click", (e) => {
-    e.preventDefault();
-    let errors = document.querySelectorAll("small");
-    errors.forEach(ele => {
-        ele.classList.remove("error");
-    })
-    txtName.value = "";
-    txtClass.value = "";
-})
-
 const studentsAPI = "https://62affd42b0a980a2ef47ae7c.mockapi.io/students";
+
+let idStudent;
+
+const handleClickReset = () => {
+    btnReset.addEventListener("click", (e) => {
+        e.preventDefault();
+        let errors = document.querySelectorAll("small");
+        errors.forEach(ele => {
+            ele.classList.remove("error");
+        })
+        txtName.value = "";
+        txtClass.value = "";
+    })
+}
+
+
 const getStudents = () => {
     axios
         .get(studentsAPI)
@@ -40,6 +44,21 @@ const renderStudents = (students) => {
         `
     })
     tbody.innerHTML = htmls.join("");
+}
+const handleUpdate = (id) => {
+    idStudent = id
+    console.log(idStudent)
+    axios
+        .get(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${id}`)
+        .then((res) => {
+            txtName.value = res.data.name;
+            txtClass.value = res.data.class;
+            idStudent = id;
+            // let dataStudent = {
+            //     name: txtName.value,
+            //     class: txtClass.value
+            // }
+        });
 }
 
 const handleClickSave = () => {
@@ -69,19 +88,34 @@ const handleClickSave = () => {
                 name: txtName.value,
                 class: txtClass.value,
             }
-            axios
-                .post("https://62affd42b0a980a2ef47ae7c.mockapi.io/students", dataStudent)
-                .then(() => {
-                    getStudents();
-                    txtName.value = "";
-                    txtClass.value = "";
-                });
+            if (idStudent) {
+                axios
+                    .put(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${idStudent}`, dataStudent)
+                    .then(() => {
+                        getStudents();
+                        txtName.value = "";
+                        txtClass.value = "";
+                    });
+                idStudent = "";
+            }
+            else {
+                console.log(false);
+                axios
+                    .post("https://62affd42b0a980a2ef47ae7c.mockapi.io/students", dataStudent)
+                    .then(() => {
+                        getStudents();
+                        txtName.value = "";
+                        txtClass.value = "";
+                    });
+                idStudent = ""
+            }
+
         }
+        // console.log(idStudent)
     })
 }
 
-getStudents();
-handleClickSave();
+
 
 const handleDelete = (id) => {
     axios
@@ -89,26 +123,17 @@ const handleDelete = (id) => {
         .then((res) => getStudents());
 }
 
-const handleUpdate = (id) => {
-    axios
-        .get(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${id}`)
-        .then((res) => {
-            txtName.value = res.data.name;
-            txtClass.value = res.data.class;
-            let dataStudent = {
-                name: txtName.value,
-                class: txtClass.value
-            }
-            axios
-                .put(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${id}`, dataStudent)
-                .then(() => {
-                    getStudents();
-                });
-        });
-}
+
 
 const isEmpty = (value) => {
     if (value) return true;
     return false;
 }
 
+function start() {
+    getStudents();
+    // console.log(idStudent)
+    handleClickSave();
+    handleClickReset();
+};
+start();
