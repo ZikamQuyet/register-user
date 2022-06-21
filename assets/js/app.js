@@ -6,7 +6,7 @@ const txtName = document.querySelector("#name");
 const txtClass = document.querySelector("#class");
 
 let idStudent;
-let tr;
+let trUpdate;
 const studentsAPI = "https://62affd42b0a980a2ef47ae7c.mockapi.io/students";
 
 const handleClickReset = () => {
@@ -50,8 +50,8 @@ const renderStudents = (students) => {
     }
     else {
         tbody.innerHTML = `
-        <tr>
-            <td>"Không có sinh viên nào..."</td>
+        <tr class="no-student">
+            <td colspan ="6" >"Không có sinh viên nào..."</td>
           </tr>
         `
     }
@@ -61,33 +61,18 @@ const renderStudents = (students) => {
 const handleClickSave = () => {
     btnSave.addEventListener("click", (e) => {
         e.preventDefault();
-        let checkInput = 0;
-        if (!isEmpty(txtName.value)) {
-            txtName.parentNode.querySelector("small").innerText = "Không bỏ trống..."
-            txtName.parentNode.querySelector("small").classList.add("error");
+        let noStudent = document.querySelector(".no-student");
+        if (noStudent) {
+            noStudent.remove();
         }
-        else {
-            txtName.parentNode.querySelector("small").classList.remove("error");
-            checkInput += 1;
-        }
-
-        if (!isEmpty(txtClass.value)) {
-            txtClass.parentNode.querySelector("small").innerText = "Không bỏ trống..."
-            txtClass.parentNode.querySelector("small").classList.add("error");
-        }
-        else {
-            txtClass.parentNode.querySelector("small").classList.remove("error");
-            checkInput += 1;
-        }
-
-        if (checkInput >= 2) {
+        if (checkValidate() >= 2) {
             let dataStudent = {
-                name: txtName.value,
-                class: txtClass.value,
+                name: txtName.value.trim(),
+                class: txtClass.value.trim(),
             }
             if (idStudent) {
-                tr.querySelector("td:nth-child(3)").innerText = txtName.value;
-                tr.querySelector("td:nth-child(4)").innerText = txtClass.value;
+                trUpdate.querySelector("td:nth-child(3)").innerText = txtName.value.trim();
+                trUpdate.querySelector("td:nth-child(4)").innerText = txtClass.value.trim();
                 txtName.value = "";
                 txtClass.value = "";
                 axios
@@ -117,43 +102,67 @@ const handleClickSave = () => {
                     })
                     .catch(err => console.log(err.message));
             }
+
         }
     })
 }
 
 const handleUpdate = (id, e) => {
     idStudent = id
-    td = e.target.parentNode;
-    tr = td.parentNode;
-    console.log(tr);
+    let td = e.target.parentNode;
+    trUpdate = td.parentNode;
     console.log(idStudent)
-    txtName.value = tr.querySelector("td:nth-child(3)").innerText
-    txtClass.value = tr.querySelector("td:nth-child(4)").innerText
-    // axios
-    //     .get(`${studentsAPI}/${id}`)
-    //     .then((res) => {
-    //         txtName.value = res.data.name;
-    //         txtClass.value = res.data.class;
-    //         idStudent = id;
-    //     })
-    //     .catch(err => alert(err.message));
+    txtName.value = trUpdate.querySelector("td:nth-child(3)").innerText
+    txtClass.value = trUpdate.querySelector("td:nth-child(4)").innerText
 }
 
 const handleDelete = (id, e) => {
     idStudent = id
-    td = e.target.parentNode;
-    tr = td.parentNode;
+    let td = e.target.parentNode;
+    let tr = td.parentNode;
     console.log(idStudent);
     tr.remove();
+    const trSTTs = document.querySelectorAll("tbody tr td:first-child");
+    trSTTs.forEach((item, index) => {
+        item.innerText = index + 1;
+    })
     if (id) {
         console.log("dele");
         axios
             .delete(`${studentsAPI}/${id}`)
-            // .then(() => getStudents())
             .catch(err => console.log(err.message));
-            idStudent ="";
+
+        idStudent = "";
     }
-    return;
+    if (trSTTs.length < 1) {
+        document.querySelector('tbody').innerHTML = `
+        <tr class="no-student">
+        <td colspan ="6" >"Không có sinh viên nào..."</td>
+      </tr>
+    `
+    }
+}
+
+const checkValidate = () => {
+    let checkInput = 0;
+    if (!isEmpty(txtName.value)) {
+        txtName.parentNode.querySelector("small").innerText = "Không bỏ trống..."
+        txtName.parentNode.querySelector("small").classList.add("error");
+    }
+    else {
+        txtName.parentNode.querySelector("small").classList.remove("error");
+        checkInput += 1;
+    }
+
+    if (!isEmpty(txtClass.value)) {
+        txtClass.parentNode.querySelector("small").innerText = "Không bỏ trống..."
+        txtClass.parentNode.querySelector("small").classList.add("error");
+    }
+    else {
+        txtClass.parentNode.querySelector("small").classList.remove("error");
+        checkInput += 1;
+    }
+    return checkInput;
 }
 
 const isEmpty = (value) => {

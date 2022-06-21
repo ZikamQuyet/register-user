@@ -96,6 +96,13 @@ small {
 table {
   width: 100%;
 }
+th:nth-child(3) {
+  min-width: 300px;
+}
+th:nth-last-child(2),
+th:last-child {
+  min-width: 90px;
+}
 table,
 th,
 td {
