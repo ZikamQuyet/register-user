@@ -1,12 +1,13 @@
+
 const btnSave = document.querySelector(".btn-save");
 const btnReset = document.querySelector(".btn-reset");
 
 const txtName = document.querySelector("#name");
 const txtClass = document.querySelector("#class");
 
-const studentsAPI = "https://62affd42b0a980a2ef47ae7c.mockapi.io/students";
-
 let idStudent;
+let tr;
+const studentsAPI = "https://62affd42b0a980a2ef47ae7c.mockapi.io/students";
 
 const handleClickReset = () => {
     btnReset.addEventListener("click", (e) => {
@@ -20,46 +21,42 @@ const handleClickReset = () => {
     })
 }
 
-
 const getStudents = () => {
     axios
         .get(studentsAPI)
         .then(res => {
             renderStudents(res.data);
         })
+        .catch(err => console.log(err.message));
 }
+
 
 const renderStudents = (students) => {
     const tbody = document.querySelector("tbody");
-    let htmls = students.map((student, index) => {
-        return `
+    if (students.length > 0) {
+        let htmls = students.map((student, index) => {
+            return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${student.studentID}</td>
+                <td>${student.name}</td>
+                <td>${student.class}</td>
+                <td><button class="btn btn-edit" onclick="handleUpdate(${student.studentID},event)">Sửa</button></td>
+                <td><button class="btn btn-delete" onclick="handleDelete(${student.studentID},event)">Xóa</button></td>
+              </tr>
+            `
+        })
+        tbody.innerHTML = htmls.join("");
+    }
+    else {
+        tbody.innerHTML = `
         <tr>
-            <td>${index + 1}</td>
-            <td>${student.studentID}</td>
-            <td>${student.name}</td>
-            <td>${student.class}</td>
-            <td><button class="btn btn-edit" onclick="handleUpdate(${student.studentID})">Sửa</button></td>
-            <td><button class="btn btn-delete" onclick="handleDelete(${student.studentID})">Xóa</button></td>
+            <td>"Không có sinh viên nào..."</td>
           </tr>
         `
-    })
-    tbody.innerHTML = htmls.join("");
+    }
 }
-const handleUpdate = (id) => {
-    idStudent = id
-    console.log(idStudent)
-    axios
-        .get(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${id}`)
-        .then((res) => {
-            txtName.value = res.data.name;
-            txtClass.value = res.data.class;
-            idStudent = id;
-            // let dataStudent = {
-            //     name: txtName.value,
-            //     class: txtClass.value
-            // }
-        });
-}
+
 
 const handleClickSave = () => {
     btnSave.addEventListener("click", (e) => {
@@ -89,50 +86,83 @@ const handleClickSave = () => {
                 class: txtClass.value,
             }
             if (idStudent) {
+                tr.querySelector("td:nth-child(3)").innerText = txtName.value;
+                tr.querySelector("td:nth-child(4)").innerText = txtClass.value;
+                txtName.value = "";
+                txtClass.value = "";
                 axios
-                    .put(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${idStudent}`, dataStudent)
-                    .then(() => {
-                        getStudents();
-                        txtName.value = "";
-                        txtClass.value = "";
-                    });
+                    .put(`${studentsAPI}/${idStudent}`, dataStudent)
+                    .catch(err => alert(err.message));
                 idStudent = "";
             }
             else {
                 console.log(false);
                 axios
-                    .post("https://62affd42b0a980a2ef47ae7c.mockapi.io/students", dataStudent)
-                    .then(() => {
-                        getStudents();
+                    .post(studentsAPI, dataStudent)
+                    .then((res) => {
+                        console.log(res);
+                        const trs = document.querySelectorAll("tr");
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td>${trs.length}</td>
+                            <td>${res.data.studentID}</td>
+                            <td>${res.data.name}</td>
+                            <td>${res.data.class}</td>
+                            <td><button class="btn btn-edit" onclick="handleUpdate(${res.data.studentID},event)">Sửa</button></td>
+                            <td><button class="btn btn-delete" onclick="handleDelete(${res.data.studentID},event)">Xóa</button></td>
+                        `;
+                        document.querySelector("tbody").append(tr);
                         txtName.value = "";
                         txtClass.value = "";
-                    });
-                idStudent = ""
+                    })
+                    .catch(err => console.log(err.message));
             }
-
         }
-        // console.log(idStudent)
     })
 }
 
-
-
-const handleDelete = (id) => {
-    axios
-        .delete(`https://62affd42b0a980a2ef47ae7c.mockapi.io/students/${id}`)
-        .then((res) => getStudents());
+const handleUpdate = (id, e) => {
+    idStudent = id
+    td = e.target.parentNode;
+    tr = td.parentNode;
+    console.log(tr);
+    console.log(idStudent)
+    txtName.value = tr.querySelector("td:nth-child(3)").innerText
+    txtClass.value = tr.querySelector("td:nth-child(4)").innerText
+    // axios
+    //     .get(`${studentsAPI}/${id}`)
+    //     .then((res) => {
+    //         txtName.value = res.data.name;
+    //         txtClass.value = res.data.class;
+    //         idStudent = id;
+    //     })
+    //     .catch(err => alert(err.message));
 }
 
-
+const handleDelete = (id, e) => {
+    idStudent = id
+    td = e.target.parentNode;
+    tr = td.parentNode;
+    console.log(idStudent);
+    tr.remove();
+    if (id) {
+        console.log("dele");
+        axios
+            .delete(`${studentsAPI}/${id}`)
+            // .then(() => getStudents())
+            .catch(err => console.log(err.message));
+            idStudent ="";
+    }
+    return;
+}
 
 const isEmpty = (value) => {
     if (value) return true;
     return false;
 }
 
-function start() {
+const start = () => {
     getStudents();
-    // console.log(idStudent)
     handleClickSave();
     handleClickReset();
 };
