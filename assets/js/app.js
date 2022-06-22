@@ -27,7 +27,7 @@ const getStudents = () => {
         .then(res => {
             renderStudents(res.data);
         })
-        .catch(err => console.log(err.message));
+        .catch(err => alert(err.message));
 }
 
 
@@ -81,11 +81,11 @@ const handleClickSave = () => {
                 idStudent = "";
             }
             else {
-                console.log(false);
+                // console.log(false);
                 axios
                     .post(studentsAPI, dataStudent)
                     .then((res) => {
-                        console.log(res);
+                        // console.log(res);
                         const trs = document.querySelectorAll("tr");
                         const tr = document.createElement("tr");
                         tr.innerHTML = `
@@ -100,7 +100,7 @@ const handleClickSave = () => {
                         txtName.value = "";
                         txtClass.value = "";
                     })
-                    .catch(err => console.log(err.message));
+                    .catch(err => alert(err.message));
             }
 
         }
@@ -111,7 +111,7 @@ const handleUpdate = (id, e) => {
     idStudent = id
     let td = e.target.parentNode;
     trUpdate = td.parentNode;
-    console.log(idStudent)
+    // console.log(idStudent)
     txtName.value = trUpdate.querySelector("td:nth-child(3)").innerText
     txtClass.value = trUpdate.querySelector("td:nth-child(4)").innerText
 }
@@ -120,17 +120,17 @@ const handleDelete = (id, e) => {
     idStudent = id
     let td = e.target.parentNode;
     let tr = td.parentNode;
-    console.log(idStudent);
+    // console.log(idStudent);
     tr.remove();
     const trSTTs = document.querySelectorAll("tbody tr td:first-child");
     trSTTs.forEach((item, index) => {
         item.innerText = index + 1;
     })
     if (id) {
-        console.log("dele");
+        // console.log("dele");
         axios
             .delete(`${studentsAPI}/${id}`)
-            .catch(err => console.log(err.message));
+            .catch(err => alert(err.message));
 
         idStudent = "";
     }
@@ -171,8 +171,9 @@ const isEmpty = (value) => {
 }
 
 const start = () => {
+    txtName.focus();
     getStudents();
     handleClickSave();
     handleClickReset();
 };
-start();
+window.onload(start())
